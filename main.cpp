@@ -218,9 +218,8 @@ void GraphicsCallback(void) {
 void HLCALLBACK computeForceCB(HDdouble force[3], HLcache *cache, void *userdata) {
     DataTransportClass *localdataObject = (DataTransportClass *)userdata;  // Typecast the pointer passed in appropriately
     hduVector3Dd skullPositionDS;                                          // Position of the skull (Moving sphere) in Device Space.
-    // hduVector3Dd skullRotationDS;
-    hduVector3Dd proxyPosition;  // Position of the proxy in device space
-    // hduVector3Dd proxyRotation;  // Rotation of the proxy in device space
+    hduVector3Dd proxyPosition;                                            // Position of the proxy in device space
+    // hduVector3Dd proxyRotation;                                            // Rotation of the proxy in device space
 
     HDdouble instRate = 0.0;
     HDdouble deltaT = 0.0;
@@ -257,13 +256,15 @@ void HLCALLBACK computeForceCB(HDdouble force[3], HLcache *cache, void *userdata
 
     hduMatrix rxyz = rZM * rYM * rXM;
 
-    localdataObject->Model->setTransform(rxyz);
+    localdataObject->Model->setTransform(rxyz);  // rotate the skull with the optitrack tracker
+
     localdataObject->Model->setTranslation(x, z, y);  // move the skull with the optitrack tracker
+
+    localdataObject->Model->setScaleInPlace(0.3);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     WorldToDevice.multVecMatrix(localdataObject->Model->getTranslation(), skullPositionDS);  // Convert the position of the sphere from world space to device space
-    // WorldToDevice.multVecMatrix(localdataObject->Model->getRotation(), skullRotationDS);     // Convert the position of the sphere from world space to device space
 
     hlCacheGetDoublev(cache, HL_PROXY_POSITION, proxyPosition);  // Get the position of the proxy in Device Coordinates (All HL commands in the servo loop callback fetch values in device coordinates)
     // hlCacheGetDoublev(cache, HL_PROXY_ROTATION, proxyRotation);  // Get the Rotation of the proxy in Device Coordinates (All HL commands in the servo loop callback fetch values in device coordinates)
