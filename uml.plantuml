@@ -1,0 +1,100 @@
+@startuml Mehdi-software
+skinparam BackgroundColor #EEEBDC
+skinparam linetype polyline
+skinparam linetype ortho
+skinparam Handwritten false
+skinparam ClassFontName Source Code Pro
+skinparam ClassFontSize 8
+skinparam sequenceMessageAlign center
+skinparam roundcorner 5
+skinparam TitleFontSize 8
+skinparam nodesep 50
+skinparam ranksep 50
+
+skinparam class{
+    BackgroundColor PaleGreen
+    ArrowColor SeaGreen
+    BorderColor Black
+    ArrowFontName Source Code Pro
+    ArrowFontSize 5
+}
+
+
+skinparam NoteBackgroundColor Beige
+skinparam NoteFontSize 6
+skinparam NoteShadowing 1
+skinparam stereotypeCBackgroundColor YellowGreen
+
+scale 1
+
+
+class Object{
+    --**fields**--
+    +positon: Eigen::Vector3f
+    +rotation: Eigen::Vector3f
+    +objFilePath: std::string*
+    ..
+    -scale: Eigen::Vector3f
+    -color: Eigen::Vector3f
+    --**methods**--
+    +setScale(): Eigen::Vector3f
+    +getScale(): Eigen::Vector3f
+    ..
+    +setColor(): Eigen::Vector3f
+    +getColor(): Eigen::Vector3f
+}
+
+note left of Object 
+    multiple objects tracking 
+    by OptiTrack cameras
+end note
+namespace opti #DDDDDD{
+class OptiTrack{
+    --**fields**--
+    -kDefaultConnectionType: static const ConnectionType
+    -g_pClient: NatNetClient*
+    -g_outputFile: FILE*
+    -g_discoveredServers: std::vector<sNatNetDiscoveredServer>
+    -g_connectParams: sNatNetClientConnectParams
+    -g_discoveredMulticastGroupAddr[kNatNetIpv4AddrStrLenMax]: char
+    -g_analogSamplesPerMocapFrame: int
+    -g_serverDescription: sServerDescription
+
+    ..
+    +numberOfRigids:int
+    +rigids_map_pos: std::map<int, Eigen::Vector3f>
+    +rigids_map_ang: std::map<int, Eigen::Vector3f>
+    +colorSet[]: Eigen::Vector3f
+    --**methods**--
+    +opti_run(int, char**): int
+    +_WriteHeader(FILE* fp, sDataDescriptions* pBodyDefs): void
+    +_WriteFrame(FILE* fp, sFrameOfMocapData* data): void
+    +_WriteFooter(FILE* fp): void
+    +NATNET_CALLCONV ServerDiscoveredCallback(const sNatNetDiscoveredServer* pDiscoveredServer, void* pUserContext): void
+    +NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData): void
+    +NATNET_CALLCONV MessageHandler(Verbosity msgType, const char* msg): void
+    +resetClient(): void
+    +ConnectClient():int
+
+}
+}
+
+namespace hap #DDDDDD{
+class Haptic{
+
+}
+}
+
+class Graphics{
+
+}
+
+Object "many" *-u- opti.OptiTrack: contains
+Object "many" *-- hap.Haptic: contains
+opti.OptiTrack o-- hap.Haptic: aggregation
+
+Object "many" o-- Graphics: aggregation
+opti.OptiTrack o-- Graphics: aggregation
+hap.Haptic o-- Graphics: aggregation
+
+@enduml

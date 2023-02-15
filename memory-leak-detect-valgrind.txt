@@ -1,0 +1,1 @@
+valgrind --log-file=valgrind-out.txt ./multiRigidTracking 10.119.13.176
