@@ -247,29 +247,17 @@ void HLCALLBACK computeForceCB(HDdouble force[3], HLcache *cache, void *userdata
     // printf("-------------------- %f, %f, %f\n", x, z, y);
     // localdataObject->Model->setTranslation(x, z, y);  // move the skull with the optitrack tracker
 
-    // hduVector3Dd aX = {1.0, 0.0, 0.0};
-    // hduVector3Dd aY = {0.0, 1.0, 0.0};
-    // hduVector3Dd aZ = {0.0, 0.0, 1.0};
     double rX = (opti->rigidObjects)[1]->rotation[0] * 3.14159 / 180.0;
     double rY = (opti->rigidObjects)[1]->rotation[1] * 3.14159 / 180.0;
     double rZ = (opti->rigidObjects)[1]->rotation[2] * 3.14159 / 180.0;
 
     hduMatrix rZM = hduMatrix::createRotationAroundZ(rZ);
-    // localdataObject->Model->setTransform(rZM);
-
     hduMatrix rYM = hduMatrix::createRotationAroundY(rY);
-    // localdataObject->Model->setTransform(rYM);
-
     hduMatrix rXM = hduMatrix::createRotationAroundX(rX);
-    // localdataObject->Model->setTransform(rXM);
 
     hduMatrix rxyz = rZM * rYM * rXM;
 
     localdataObject->Model->setTransform(rxyz);
-
-    // hduQuaternion q = hduQuaternion::fromAxisAngle();
-    // hduMatrix rt = hduMatrix::createRotationTranslation();
-
     localdataObject->Model->setTranslation(x, z, y);  // move the skull with the optitrack tracker
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
