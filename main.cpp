@@ -267,7 +267,6 @@ void HLCALLBACK computeForceCB(HDdouble force[3], HLcache *cache, void *userdata
     WorldToDevice.multVecMatrix(localdataObject->Model->getTranslation(), skullPositionDS);  // Convert the position of the sphere from world space to device space
 
     hlCacheGetDoublev(cache, HL_PROXY_POSITION, proxyPosition);  // Get the position of the proxy in Device Coordinates (All HL commands in the servo loop callback fetch values in device coordinates)
-    // hlCacheGetDoublev(cache, HL_PROXY_ROTATION, proxyRotation);  // Get the Rotation of the proxy in Device Coordinates (All HL commands in the servo loop callback fetch values in device coordinates)
 
     forceVec = forceField(proxyPosition, skullPositionDS, 40.0, 5.0);  // Calculate the force
 
