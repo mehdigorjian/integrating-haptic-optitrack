@@ -219,7 +219,6 @@ void HLCALLBACK computeForceCB(HDdouble force[3], HLcache *cache, void *userdata
     DataTransportClass *localdataObject = (DataTransportClass *)userdata;  // Typecast the pointer passed in appropriately
     hduVector3Dd skullPositionDS;                                          // Position of the skull (Moving sphere) in Device Space.
     hduVector3Dd proxyPosition;                                            // Position of the proxy in device space
-    // hduVector3Dd proxyRotation;                                            // Rotation of the proxy in device space
 
     HDdouble instRate = 0.0;
     HDdouble deltaT = 0.0;
