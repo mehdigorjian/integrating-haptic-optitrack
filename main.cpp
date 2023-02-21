@@ -243,7 +243,6 @@ void HLCALLBACK computeForceCB(HDdouble force[3], HLcache *cache, void *userdata
     HDdouble z = (HDdouble)(p[2]);
 
     // printf("-------------------- %f, %f, %f\n", x, z, y);
-    // localdataObject->Model->setTranslation(x, z, y);  // move the skull with the optitrack tracker
 
     double rX = (opti->rigidObjects)[1]->rotation[0] * 3.14159 / 180.0;
     double rY = (opti->rigidObjects)[1]->rotation[1] * 3.14159 / 180.0;
