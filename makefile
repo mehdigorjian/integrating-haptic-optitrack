@@ -1,7 +1,7 @@
-INCLUDE=-I../../include #-I$(IMGUI_DIR)/include -I$(IMGUI_DIR)/backends
+INCLUDE=-I../../include -I/usr/include/QH #-I$(IMGUI_DIR)/include -I$(IMGUI_DIR)/backends
 LIBS=-L../../lib
 LDFLAGS=-lNatNet -ldl -lpthread -lgomp -lQHGLUTWrapper -lQH -lHL -lHLU -lHDU -lHD -lGL -lGLU -lglut -lrt -lncurses -lz -lstdc++ -lm
-CXXFLAGS=-fopenmp -I/usr/include/QH #-std=c++11 -W -g -DNDEBUG -Dlinux -g -Wall -Wformat
+CXXFLAGS=-fopenmp #-std=c++11 -W -g -DNDEBUG -Dlinux -g -Wall -Wformat
 TARGET=main
 IMGUI_DIR=imgui
 
@@ -17,4 +17,4 @@ $(TARGET): $(SRCS)
 
 .PHONY: clean
 clean:
-	@rm -f ./app
+	@rm -f ./main

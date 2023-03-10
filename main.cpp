@@ -24,6 +24,7 @@
 ///
 #include <cmath>
 #include <eigen3/Eigen/Geometry>
+#include <iostream>
 #include <map>
 #include <stack>
 #include <thread>  // multithreading (using libs=-lpthread)
@@ -31,6 +32,13 @@
 
 #include "Model.h"
 #include "Object.h"
+#include "inchar.h"
+
+Eigen::Vector3f hcurr_temp;
+Eigen::Vector3f ocurr_temp;
+
+std::vector<Eigen::Vector3f> optitrack_ptsA;
+std::vector<Eigen::Vector3f> haptic_ptsB;
 
 std::shared_ptr<OptiTrack> opti = std::make_shared<OptiTrack>();
 class DataTransportClass  // This class carried data into the ServoLoop thread
@@ -54,6 +62,7 @@ void HLCALLBACK startEffectCB(HLcache *cache, void *userdata);                  
 void HLCALLBACK stopEffectCB(HLcache *cache, void *userdata);                                         // Servo Loop callback
 hduVector3Dd forceField(hduVector3Dd Pos1, hduVector3Dd Pos2, HDdouble Multiplier, HLdouble Radius);  // This function computer the force beween the Model and the particle based on the positions
 void glut_main(int, char **);
+void glutMenuFunction(int MenuID);
 
 int main(int argc, char **argv) {
     std::thread t1(&OptiTrack::run, opti, argc, argv);
@@ -127,6 +136,12 @@ void glut_main(int argc, char **argv) {
     farplane += 80.;
     DisplayObject->setCamera(fov + 15., nearplane, farplane, eyepoint, lookat, up);
 
+    // Create the GLUT menu
+    glutCreateMenu(glutMenuFunction);
+    // Add entries
+    glutAddMenuEntry("add point", 0);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+
     // Set everything in motion
     qhStart();
     // return 0;
@@ -161,6 +176,15 @@ void GraphicsCallback(void) {
 
     // Set transform for Red Sphere
     localCursorPosition = localDeviceCursor->getPosition();  // Get the local cursor position in World Space
+    printf("--------------------------------------------------------- %f, %f, %f\n", localCursorPosition[0], localCursorPosition[1], localCursorPosition[2]);
+    if (haptic_ptsB.size() != 0)
+        printf("********************************************************* %f, %f, %f\n", haptic_ptsB[0][0], haptic_ptsB[0][1], haptic_ptsB[0][2]);
+
+    hcurr_temp[0] = (float)localCursorPosition[0];
+    hcurr_temp[1] = (float)localCursorPosition[1];
+    hcurr_temp[2] = (float)localCursorPosition[2];
+
+    // printf("************************************************************** %d", haptic_ptsB.size());
 
     hduVector3Dd localCursorSpherePos = localCursorSphere->getTranslation();
     localCursorSphere->setTranslation(-localCursorSpherePos);
@@ -237,6 +261,13 @@ void HLCALLBACK computeForceCB(HDdouble force[3], HLcache *cache, void *userdata
     localdataObject->Model->setTranslation(-ModelPos);
 
     Eigen::Vector3f p = (opti->rigidObjects)[1]->position;
+
+    // char keypressed = getkeyboard();
+    // if (keypressed == 'a' || keypressed == 'A') {
+    //     haptic_ptsB.push_back(hcurr_temp);
+    // }
+
+    // printf("************************************************************** %i", haptic_ptsB.size());
 
     HDdouble x = (HDdouble)(-p[0]);
     HDdouble y = (HDdouble)(p[1]);
@@ -332,4 +363,11 @@ hduVector3Dd forceField(hduVector3Dd Pos1, hduVector3Dd Pos2, HDdouble Multiplie
     }
 
     return forceVec;
+}
+
+void glutMenuFunction(int MenuID) {
+    if (MenuID == 0) {
+        haptic_ptsB.push_back(hcurr_temp);
+        optitrack_ptsA.push_back(ocurr_temp);
+    }
 }
